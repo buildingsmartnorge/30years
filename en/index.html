@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>30 years of buildingSMART</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-intro: #ffffff;
+    --ink: #1e1e1c;
+    --muted: #8a8680;
+    --line: #ddd9d3;
+    --line-light: #eceae6;
+
+    --ui: #3679ee;
+    --ui-light: #eaf1fe;
+
+    --org: #3679ee;
+    --org-light: #eef4ff;
+    --tek: #0eab9a;
+    --tek-light: #ecfaf7;
+    --sem: #8b5cf6;
+    --sem-light: #f3effe;
+    --pros: #e8643a;
+    --pros-light: #fef0eb;
+  }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── INTRO HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 4rem 2rem;
+    background: var(--bg-intro);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(to bottom, transparent, #ffffff);
+    pointer-events: none;
+  }
+
+  .hero-logo {
+    max-width: min(420px, 72vw);
+    width: 100%;
+    opacity: 0;
+    animation: fadeIn 0.8s ease 0.2s forwards;
+  }
+
+  .hero-content {
+    text-align: center;
+    max-width: 600px;
+    opacity: 0;
+    animation: fadeIn 0.8s ease 0.5s forwards;
+  }
+
+  .hero-tracks {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeIn 0.8s ease 0.7s forwards;
+  }
+
+  .hero-track {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .hero-track-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+  }
+
+  .hero-desc {
+    font-size: 0.88rem;
+    line-height: 1.8;
+    color: var(--muted);
+    font-weight: 300;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--ui);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.8rem 1.5rem;
+    border: 2px solid var(--ui);
+    border-radius: 100px;
+    transition: all 0.3s ease;
+    opacity: 0;
+    animation: fadeIn 0.8s ease 0.9s forwards;
+  }
+
+  .hero-cta:hover {
+    background: var(--ui);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(54, 121, 238, 0.25);
+  }
+
+  .hero-cta svg {
+    transition: transform 0.3s ease;
+  }
+
+  .hero-cta:hover svg {
+    transform: translateY(3px);
+  }
+
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.90);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--line-light);
+    padding: 0.8rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.45rem 1rem;
+    border-radius: 100px;
+    border: 1.5px solid var(--line);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+  }
+
+  .filter-btn:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+
+  .filter-btn.active {
+    border-color: currentColor;
+    color: var(--ink);
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  .filter-btn[data-filter="org"].active { color: var(--org); border-color: var(--org); }
+  .filter-btn[data-filter="tek"].active { color: var(--tek); border-color: var(--tek); }
+  .filter-btn[data-filter="sem"].active { color: var(--sem); border-color: var(--sem); }
+  .filter-btn[data-filter="pros"].active { color: var(--pros); border-color: var(--pros); }
+
+  /* ── TIMELINE CONTAINER ── */
+  .timeline-section {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 3rem 2rem 6rem;
+    position: relative;
+    background: #ffffff;
+  }
+
+  /* Central vertical line */
+  .timeline-spine {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--line);
+    transform: translateX(-50%);
+  }
+
+  .timeline-spine::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--ui);
+  }
+
+  .timeline-spine::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--ui);
+  }
+
+  /* ── YEAR GROUP ── */
+  .year-group {
+    position: relative;
+    margin-bottom: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .year-group.filtered-out {
+    opacity: 0.08;
+    pointer-events: none;
+  }
+
+  /* Year marker on the spine */
+  .year-marker {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.2rem 0 0.3rem;
+    z-index: 10;
+  }
+
+  .year-marker-label {
+    background: #ffffff;
+    font-size: 1.4rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    padding: 0.35rem 1.2rem;
+    border: 2px solid var(--line);
+    border-radius: 100px;
+    position: relative;
+    z-index: 2;
+    cursor: default;
+    transition: all 0.3s ease;
+  }
+
+  .year-group:hover .year-marker-label {
+    border-color: var(--ui);
+    color: var(--ui);
+  }
+
+  /* ── EVENT NODES — two-column grid layout ── */
+  .events-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    position: relative;
+    row-gap: 0.25rem;
+  }
+
+  .event-node {
+    position: relative;
+    padding: 0.35rem 0;
+  }
+
+  /* Left-side card: padding pushes card away from spine */
+  .event-node[data-side="left"] {
+    padding-right: 32px;
+  }
+
+  /* Right-side card: padding pushes card away from spine */
+  .event-node[data-side="right"] {
+    padding-left: 32px;
+  }
+
+  /* ── DOT on the spine ── */
+  .node-dot-wrapper {
+    position: absolute;
+    z-index: 10;
+    top: 1.2rem;
+    cursor: pointer;
+  }
+
+  /* Left dot: at the right edge of the left column = spine */
+  .event-node[data-side="left"] .node-dot-wrapper {
+    left: 100%;
+    transform: translateX(-50%);
+  }
+
+  /* Right dot: at the left edge of the right column = spine */
+  .event-node[data-side="right"] .node-dot-wrapper {
+    left: 0;
+    transform: translateX(-50%);
+  }
+
+  .node-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 3px solid var(--line);
+    background: #ffffff;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .node-dot::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+  }
+
+  .event-node[data-track="org"] .node-dot { border-color: var(--org); }
+  .event-node[data-track="tek"] .node-dot { border-color: var(--tek); }
+  .event-node[data-track="sem"] .node-dot { border-color: var(--sem); }
+  .event-node[data-track="pros"] .node-dot { border-color: var(--pros); }
+
+  .event-node.open .node-dot,
+  .node-dot-wrapper:hover .node-dot {
+    transform: scale(1.3);
+  }
+
+  .event-node[data-track="org"].open .node-dot { background: var(--org); }
+  .event-node[data-track="tek"].open .node-dot { background: var(--tek); }
+  .event-node[data-track="sem"].open .node-dot { background: var(--sem); }
+  .event-node[data-track="pros"].open .node-dot { background: var(--pros); }
+
+  /* ── CARD ── */
+  .node-card {
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Connector line from card edge towards spine dot */
+  .node-card::before {
+    content: '';
+    position: absolute;
+    top: 1.5rem;
+    width: 20px;
+    height: 2px;
+    background: var(--line);
+    transition: background 0.3s ease;
+  }
+
+  .event-node[data-side="left"] .node-card::before {
+    right: -20px;
+    left: auto;
+  }
+
+  .event-node[data-side="right"] .node-card::before {
+    left: -20px;
+    right: auto;
+  }
+
+  .event-node[data-track="org"] .node-card::before { background: var(--org); opacity: 0.3; }
+  .event-node[data-track="tek"] .node-card::before { background: var(--tek); opacity: 0.3; }
+  .event-node[data-track="sem"] .node-card::before { background: var(--sem); opacity: 0.3; }
+  .event-node[data-track="pros"] .node-card::before { background: var(--pros); opacity: 0.3; }
+
+  .node-card-inner {
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    border-left: 3px solid transparent;
+    transition: all 0.3s ease;
+  }
+
+  /* Track colors */
+  .event-node[data-track="org"] .node-card-inner {
+    background: var(--org-light);
+    border-left-color: var(--org);
+  }
+  .event-node[data-track="tek"] .node-card-inner {
+    background: var(--tek-light);
+    border-left-color: var(--tek);
+  }
+  .event-node[data-track="sem"] .node-card-inner {
+    background: var(--sem-light);
+    border-left-color: var(--sem);
+  }
+  .event-node[data-track="pros"] .node-card-inner {
+    background: var(--pros-light);
+    border-left-color: var(--pros);
+  }
+
+  .node-card:hover .node-card-inner {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+  }
+
+  .event-node.open .node-card .node-card-inner {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  }
+
+  .card-badge {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 0.18rem 0.55rem;
+    border-radius: 20px;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+
+  .event-node[data-track="org"] .card-badge { background: var(--org); }
+  .event-node[data-track="tek"] .card-badge { background: var(--tek); }
+  .event-node[data-track="sem"] .card-badge { background: var(--sem); }
+  .event-node[data-track="pros"] .card-badge { background: var(--pros); }
+
+  .card-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .card-title strong { font-weight: 900; }
+
+  .card-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                opacity 0.35s ease,
+                margin 0.35s ease;
+    opacity: 0;
+    margin-top: 0;
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: #4a4845;
+    font-weight: 300;
+  }
+
+  .event-node.open .card-body {
+    max-height: 300px;
+    opacity: 1;
+    margin-top: 0.6rem;
+  }
+
+  /* Expand hint */
+  .card-expand-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.45rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    transition: color 0.3s ease;
+  }
+
+  .card-expand-hint svg {
+    transition: transform 0.3s ease;
+    width: 12px;
+    height: 12px;
+  }
+
+  .event-node.open .card-expand-hint svg {
+    transform: rotate(180deg);
+  }
+
+  .node-card:hover .card-expand-hint {
+    color: var(--ink);
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .year-group {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .year-group.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .year-group.filtered-out {
+    opacity: 0.06 !important;
+    transform: none !important;
+    pointer-events: none;
+  }
+
+  /* ── FOOTER ── */
+  .timeline-footer {
+    text-align: center;
+    padding: 3rem 2rem 5rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 760px) {
+    .timeline-spine {
+      left: 24px;
+    }
+
+    .timeline-spine::before,
+    .timeline-spine::after {
+      left: 50%;
+    }
+
+    .year-marker {
+      justify-content: flex-start;
+      padding-left: 0;
+    }
+
+    .year-marker-label {
+      margin-left: 44px;
+      font-size: 1.1rem;
+      padding: 0.25rem 0.9rem;
+    }
+
+    /* Collapse grid to single column on mobile */
+    .events-row {
+      display: block;
+    }
+
+    .event-node[data-side="left"],
+    .event-node[data-side="right"] {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .event-node[data-side="left"] .node-dot-wrapper,
+    .event-node[data-side="right"] .node-dot-wrapper {
+      left: 24px;
+      transform: translateX(-50%);
+    }
+
+    .event-node[data-side="left"] .node-card,
+    .event-node[data-side="right"] .node-card {
+      width: calc(100% - 58px);
+      margin-left: 58px;
+    }
+
+    .event-node[data-side="left"] .node-card::before,
+    .event-node[data-side="right"] .node-card::before {
+      left: -14px !important;
+      right: auto !important;
+      width: 14px;
+    }
+
+    .hero { padding: 3rem 1.5rem; min-height: 90vh; }
+    .hero-desc { font-size: 0.82rem; }
+    .timeline-section { padding: 2rem 1rem 4rem; }
+    .filter-bar { padding: 0.6rem 1rem; gap: 0.4rem; }
+    .filter-btn { font-size: 0.62rem; padding: 0.35rem 0.7rem; }
+  }
+
+  @media (max-width: 480px) {
+    .event-node[data-side="left"] .node-card,
+    .event-node[data-side="right"] .node-card {
+      width: calc(100% - 48px);
+      margin-left: 48px;
+    }
+    .node-card-inner { padding: 0.8rem 1rem; }
+    .card-title { font-size: 0.88rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════ HERO ════ -->
+<section class="hero">
+  <img class="hero-logo" src="logo.svg" alt="30 years of buildingSMART Norway" />
+
+  <div class="hero-content">
+    <div class="hero-tracks">
+      <div class="hero-track"><div class="hero-track-dot" style="background:var(--org)"></div><span style="color:var(--org)">Organisational</span></div>
+      <div class="hero-track"><div class="hero-track-dot" style="background:var(--tek)"></div><span style="color:var(--tek)">Technical</span></div>
+      <div class="hero-track"><div class="hero-track-dot" style="background:var(--sem)"></div><span style="color:var(--sem)">Semantic</span></div>
+      <div class="hero-track"><div class="hero-track-dot" style="background:var(--pros)"></div><span style="color:var(--pros)">Process</span></div>
+    </div>
+    <p class="hero-desc">
+      The timeline shows 30 years of buildingSMART and how openBIM has evolved from the first IFC versions in the 1990s to today's international standards and Norwegian frameworks.<br><br>
+      The development is divided into four parallel tracks – organisational, technological, semantic and process – which together have made openBIM a robust, international digital infrastructure for the construction industry.
+    </p>
+  </div>
+
+  <a href="#tidslinje" class="hero-cta">
+    Explore the timeline
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
+</section>
+
+<!-- ════ FILTER BAR ════ -->
+<div class="filter-bar" id="filter-bar">
+  <button class="filter-btn active" data-filter="all">All tracks</button>
+  <button class="filter-btn" data-filter="org">Organisational</button>
+  <button class="filter-btn" data-filter="tek">Technical</button>
+  <button class="filter-btn" data-filter="sem">Semantic</button>
+  <button class="filter-btn" data-filter="pros">Process</button>
+</div>
+
+<!-- ════ TIMELINE ════ -->
+<section class="timeline-section" id="tidslinje">
+  <div class="timeline-spine"></div>
+  <div id="timeline-content"></div>
+</section>
+
+<footer class="timeline-footer">
+  buildingSMART Norway — 30 years of openBIM
+</footer>
+
+<script>
+const events = [
+  {
+    year: 1995,
+    cards: [
+      { track: 'org', label: 'Organisational', title: 'IAI International <strong>is founded🌱</strong>', body: "The International Alliance for Interoperability starts with 12 national and regional initiatives. A global collaboration for open standards in the construction industry takes shape. The organisation lays the foundation for what will become the world's leading standards organisation for openBIM." }
+    ]
+  },
+  {
+    year: 1996,
+    cards: [
+      { track: 'org', label: 'Organisational', title: 'IAI Nordic and <strong>IAI Forum Norway🤝</strong>', body: "Norway joins IAI Nordic as IAI Forum Norway. Norway, Denmark and Finland found IAI Nordic. Sweden and Iceland join later, laying the foundation for a strong Nordic community for open BIM standards." },
+      { track: 'tek', label: 'Technical', title: 'IFC 1.0 – <strong>the first standard</strong>', body: "The first version of the Industry Foundation Classes is published. IFC 1.0 establishes a common machine-readable format for building information and marks the start of a new era of digital information exchange in the construction industry." }
+    ]
+  },
+  {
+    year: 1999,
+    cards: [
+      { track: 'tek', label: 'Technical', title: 'IFC 2.0 – <strong>extended scope</strong>', body: "IFC 2.0 extends the standard with new content and an improved structure. The standard begins to mature into a reliable platform for model exchange between disciplines and software applications in projects." }
+    ]
+  },
+  {
+    year: 2000,
+    cards: [
+      { track: 'tek', label: 'Technical', title: 'IFC 2x – <strong>architecture and structures</strong>', body: "IFC 2x introduces a new, more flexible architecture. The standard begins to cover a wider range of building disciplines and lays the foundation for the coming versions that will become the global reference for model-based data exchange." }
+    ]
+  },
+  {
+    year: 2003,
+    cards: [
+      { track: 'tek', label: 'Technical', title: 'IFC 2x2 – <strong>greater maturity</strong>', body: "IFC 2x2 gives the standard greater stability and broader support from software vendors." },
+      { track: 'org', label: 'Organisational', title: 'First <strong>pilot projects</strong> with BIM and IFC', body: "Statsbygg, Helse Sør-Øst and Forsvarsbygg carry out the first pilot projects using BIM and IFC in real construction projects. Norway is among the leading countries in the world in the practical implementation of open BIM standards." }
+    ]
+  },
+  {
+    year: 2005,
+    cards: [
+      { track: 'org', label: 'Organisational', title: 'IAI changes its name to <strong>buildingSMART✍</strong>', body: "The organisation changes its name and identity to buildingSMART – a name that better reflects the vision of smart, digital building processes. The name change signals a new phase with greater focus on implementation and standardisation." },
+      { track: 'tek', label: 'Technical', title: 'IFC published as <strong>ISO/PAS 16739:2005</strong>', body: "IFC gains international recognition by being published as an ISO Publicly Available Specification. A historic milestone that documents the quality of the standard and opens the door to global adoption in the public and private sectors." }
+    ]
+  },
+  {
+    year: 2006,
+    cards: [
+      { track: 'org', label: 'Organisational', title: 'buildingSMART Standards Committee <strong>is established🤝</strong>', body: "The buildingSMART Standards Committee is established to coordinate standards development. This is central to the anchoring and quality assurance of all standards and services. The buildingSMART project runs from 2006 to 2009 and lays the foundation for future growth." },
+      { track: 'tek', label: 'Technical', title: 'IFC 2x3 – <strong>global reference🌐</strong>', body: "IFC 2x3 is adopted as the global reference for data exchange in the construction industry. The standard is used at scale in international projects and is still one of the most widely used versions in the industry today." }
+    ]
+  },
+  {
+    year: 2007,
+    cards: [
+      { track: 'tek', label: 'Technical', title: 'IFC 2x3 TC1 – <strong>technical corrigendum</strong>', body: "IFC 2x3 TC1 is published as a technical corrigendum to the 2x3 standard. Corrections and clarifications strengthen the reliability of the standard and contribute to broader and more consistent implementation by software vendors." },
+      { track: 'sem', label: 'Semantic', title: 'ISO 12006-3 – <strong>the basis for data dictionaries</strong>', body: "The data dictionary standard ISO 12006-3 is published and forms the basis for structured, machine-readable classification systems across systems and countries." },
+      { track: 'sem', label: 'Semantic', title: 'IFD Library and <strong>BARBi are established</strong>', body: "The forerunner of the buildingSMART Data Dictionary is established through the IFD Library and the BARBi initiative (2007–2008). This lays the foundation for a common, open lexicon for the construction industry with machine-readable semantics across systems and borders." }
+    ]
+  },
+  {
+    year: 2010,
+    cards: [
+      { track: 'org', label: 'Organisational', title: 'buildingSMART Norway becomes <strong>its own Chapter🌱</strong>', body: "buildingSMART Norway is established as an independent Chapter and hires a secretariat. Norway gains a professional national organisation that can work full time on standardisation, competence building and dialogue with the authorities." },
+      { track: 'pros', label: 'Process', title: 'The IDM standard <strong>ISO 29481-1 is published</strong>', body: "The Information Delivery Manual standard ISO 29481-1 is published. IDM provides a methodology for describing when, by whom and what information is to be exchanged in a project – a key building block for efficient BIM-based workflows." },
+      { track: 'pros', label: 'Process', title: 'The MVD concept <strong>is developed</strong>', body: "The Model View Definition (MVD) concept is developed and becomes central to software certification. An MVD defines which parts of the IFC standard are needed for specific use cases, simplifying implementation." }
+    ]
+  },
+  {
+    year: 2011,
+    cards: [
+      { track: 'pros', label: 'Process', title: 'Work on <strong>NS 8360 begins</strong>', body: "Work on NS 8360 begins in Norway. The standard will become a central national framework for BIM-based information management, linking Norwegian practice to the international buildingSMART standards." }
+    ]
+  },
+  {
+    year: 2012,
+    cards: [
+      { track: 'pros', label: 'Process', title: 'ISO 29481-2 and <strong>BIM requirements</strong>', body: "ISO 29481-2 is published and complements the IDM framework. Statsbygg, Forsvarsbygg and Helse Sør-Øst require BIM in all projects – a milestone that drives adoption and professionalisation of the Norwegian construction industry." }
+    ]
+  },
+  {
+    year: 2013,
+    cards: [
+      { track: 'tek', label: 'Technical', title: 'IFC 4 published as <strong>ISO 16739</strong>', body: "IFC 4 (IFC 2x4) achieves international status as an ISO standard. An important confirmation that the buildingSMART standards are recognised at the highest level globally, opening up new areas of use including infrastructure." }
+    ]
+  },
+  {
+    year: 2015,
+    cards: [
+      { track: 'pros', label: 'Process', title: 'NS 8360 – <strong>first version published</strong>', body: "The first version of NS 8360 is published. The standard gives Norwegian stakeholders a national reference for structured information management in construction projects, linking directly to ISO 19650 and the buildingSMART standards." }
+    ]
+  },
+  {
+    year: 2016,
+    cards: [
+      { track: 'sem', label: 'Semantic', title: 'ISO 12006-3 <strong>is revised</strong>', body: "ISO 12006-3 is revised and provides an updated basis for classification and data dictionary structures. The revision lays the foundation for a modernised version of the buildingSMART Data Dictionary." }
+    ]
+  },
+  {
+    year: 2017,
+    cards: [
+      { track: 'tek', label: 'Technical', title: 'IFC 4 Add2 TC1 and <strong>ISO 16739-1:2018</strong>', body: "IFC 4 Add2 TC1 is published and officially recognised as ISO 16739-1:2018. The version improves geometry representation and coordinate handling, further strengthening the international legitimacy of the standard." },
+      { track: 'sem', label: 'Semantic', title: 'bSDD <strong>is established</strong>', body: "The buildingSMART Data Dictionary is launched in a modernised form (2017–2018). A common, open lexicon for the construction industry takes shape – bSDD makes it possible to share and reuse terminology across systems and borders." }
+    ]
+  },
+  {
+    year: 2018,
+    cards: [
+      { track: 'pros', label: 'Process', title: 'ISO 19650 parts 1 and 2 <strong>are published</strong>', body: "ISO 19650 parts 1 and 2 are published – an international framework for information management using BIM. The standard builds on the British PAS 1192 and provides a global reference for all phases of a construction project." }
+    ]
+  },
+  {
+    year: 2020,
+    cards: [
+      { track: 'pros', label: 'Process', title: 'ISO 19650 parts 3 and 6 <strong>are published</strong>', body: "ISO 19650 parts 3 and 6 are published, extending the international information management framework to cover the operational phase and security considerations. The standard becomes increasingly central to international projects." }
+    ]
+  },
+  {
+    year: 2021,
+    cards: [
+      { track: 'pros', label: 'Process', title: 'MMI guide 2.0 and <strong>the Reinforcement guide</strong>', body: "MMI guide 2.0 (Model Maturity Index) is published with an updated methodology for model maturity indicators. The Reinforcement guide is released and contributes to the practical implementation of buildingSMART standards in Norwegian projects." }
+    ]
+  },
+  {
+    year: 2022,
+    cards: [
+      { track: 'tek', label: 'Technical', title: 'IFC 4.3 and <strong>openCDE</strong>', body: "IFC 4.3 is published (2022–2023), extending IFC to cover infrastructure, roads, railways and maritime facilities. openCDE is established as a buildingSMART service for open, standardised access to BIM data in cloud environments." }
+    ]
+  },
+  {
+    year: 2024,
+    cards: [
+      { track: 'tek', label: 'Technical', title: 'IFC 4.3 Add2 – <strong>ISO 16739-1:2024</strong>', body: "IFC 4.3 Add2 is published as ISO 16739-1:2024. An important milestone that gives the infrastructure extensions full ISO status and confirms IFC as the global standard for digital information exchange in buildings and infrastructure." },
+      { track: 'pros', label: 'Process', title: 'NS 8360 – <strong>complete series published</strong>', body: "NS 8360 is published as a complete series with four parts and a guide (2021–2024). The series provides a comprehensive Norwegian framework for digital collaboration in construction projects and is now a core document in the Norwegian construction industry." }
+    ]
+  },
+  {
+    year: 2025,
+    cards: [
+      { track: 'org', label: 'Organisational', title: 'buildingSMART International <strong>turns 30🎉</strong>', body: "Three decades of open standardisation are celebrated worldwide. From a small alliance of 12 pioneers in 1995 to a worldwide movement with around 40 Chapters across continents. Today the buildingSMART standards are the foundation for the digital transformation of the global construction industry." },
+      { track: 'tek', label: 'Technical', title: 'IFC Validation Service <strong>is launched</strong>', body: "The IFC Validation Service is established as a key buildingSMART service. It enables automatic validation of IFC files against the requirements of the standard and contributes to higher quality and consistency in digital information exchange." },
+      { track: 'sem', label: 'Semantic', title: 'IDS – <strong>Information Delivery Specification</strong>', body: "IDS is established as a key buildingSMART standard. The Information Delivery Specification lets project teams define precise requirements for which information must be delivered in IFC files, enabling automatic validation of deliveries." },
+      { track: 'pros', label: 'Process', title: 'POFIN and <strong>the Water and Wastewater guide are published</strong>', body: "POFIN is published – a Norwegian framework for design and object information. The Water and Wastewater (VA) guide is published and provides practical guidance for water and wastewater projects, contributing to wider implementation of buildingSMART standards in Norwegian infrastructure." }
+    ]
+  },
+  {
+    year: 2026,
+    cards: [
+      { track: 'org', label: 'Organisational', title: 'buildingSMART Norway <strong>turns 30🎉</strong>', body: "From 12 initiatives in 1995 to 40 Chapters worldwide – and Norway has been there all the way. buildingSMART Norway marks 30 years of Norwegian pioneering work for digital collaboration in the construction industry, and 16 years as an independent Chapter with a dedicated secretariat." }
+    ]
+  }
+];
+
+// ── BUILD TIMELINE ──
+const container = document.getElementById('timeline-content');
+
+events.forEach((yearEvent) => {
+  const group = document.createElement('div');
+  group.className = 'year-group';
+  group.dataset.year = yearEvent.year;
+
+  // Year marker
+  const marker = document.createElement('div');
+  marker.className = 'year-marker';
+  marker.innerHTML = `<div class="year-marker-label">${yearEvent.year}</div>`;
+  group.appendChild(marker);
+
+  // Events row — 2-column grid, cards fill both sides
+  const row = document.createElement('div');
+  row.className = 'events-row';
+
+  yearEvent.cards.forEach((card, index) => {
+    const node = document.createElement('div');
+    node.className = 'event-node';
+    node.dataset.track = card.track;
+
+    // Distribute cards: even index → left, odd index → right
+    // Cards at the same index/2 share the same grid row (side by side)
+    const side = index % 2 === 0 ? 'left' : 'right';
+    const pairRow = Math.floor(index / 2) + 1;
+    node.dataset.side = side;
+    node.style.gridColumn = side === 'left' ? '1' : '2';
+    node.style.gridRow = String(pairRow);
+
+    node.innerHTML = `
+      <div class="node-dot-wrapper"><div class="node-dot"></div></div>
+      <div class="node-card">
+        <div class="node-card-inner">
+          <span class="card-badge">${card.label}</span>
+          <div class="card-title">${card.title}</div>
+          <div class="card-body">${card.body}</div>
+          <div class="card-expand-hint">
+            <span class="hint-text">Read more</span>
+            <svg viewBox="0 0 12 12" fill="none"><path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Toggle open/close
+    const toggleOpen = () => {
+      const wasOpen = node.classList.contains('open');
+      // Close all others
+      document.querySelectorAll('.event-node.open').forEach(n => {
+        n.classList.remove('open');
+        n.querySelector('.hint-text').textContent = 'Read more';
+      });
+      if (!wasOpen) {
+        node.classList.add('open');
+        node.querySelector('.hint-text').textContent = 'Close';
+      }
+    };
+
+    node.querySelector('.node-card').addEventListener('click', toggleOpen);
+    node.querySelector('.node-dot-wrapper').addEventListener('click', toggleOpen);
+
+    row.appendChild(node);
+  });
+
+  group.appendChild(row);
+  container.appendChild(group);
+});
+
+// ── SCROLL REVEAL ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.year-group').forEach(g => observer.observe(g));
+
+// ── FILTERS ──
+let activeFilter = 'all';
+const filterBtns = document.querySelectorAll('.filter-btn');
+
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    applyFilter();
+  });
+});
+
+function applyFilter() {
+  document.querySelectorAll('.year-group').forEach(group => {
+    if (activeFilter === 'all') {
+      group.classList.remove('filtered-out');
+      group.querySelectorAll('.event-node').forEach(n => {
+        n.style.display = '';
+      });
+      return;
+    }
+
+    const nodes = group.querySelectorAll('.event-node');
+    let hasVisible = false;
+
+    nodes.forEach(n => {
+      if (n.dataset.track === activeFilter) {
+        n.style.display = '';
+        hasVisible = true;
+      } else {
+        n.style.display = 'none';
+      }
+    });
+
+    group.classList.toggle('filtered-out', !hasVisible);
+  });
+}
+</script>
+</body>
+</html>
